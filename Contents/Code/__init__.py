@@ -77,7 +77,7 @@ def LatestList(page=1):
 def DevourScrape(devour_url):
 
 	devour_html = HTML.ElementFromURL(devour_url, cacheTime=CACHE_1WEEK)
-	url = devour_html.xpath('//iframe')[0].get('src')
+	url = devour_html.xpath('//iframe[not(contains(@src, "facebook.com"))]')[0].get('src')
 	video = URLService.MetadataObjectForURL(url)
 
 	# Use the Devour-provided title, description vs. the ones assocaited with the underlying clips.
