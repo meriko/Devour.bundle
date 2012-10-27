@@ -7,36 +7,34 @@ SEARCH = 'icon-search.png'
 ###################################################################################################
 def Start():
 
-	Plugin.AddPrefixHandler('/video/devour', MainMenu, TITLE, ICON, ART)
-	Plugin.AddViewGroup("List", viewMode="List", mediaType="items")
+	Plugin.AddViewGroup('InfoList', viewMode='InfoList', mediaType='items')
 
 	ObjectContainer.title1 = TITLE
-	ObjectContainer.view_group = 'List'
+	ObjectContainer.view_group = 'InfoList'
 	ObjectContainer.art = R(ART)
 
 	DirectoryObject.thumb = R(ICON)
-	DirectoryObject.art = R(ART)
-	VideoClipObject.thumb = R(ICON)
-	VideoClipObject.art = R(ART)
+	NextPageObject.thumb = R(ICON)
 
 	HTTP.CacheTime = 300
-	HTTP.Headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:12.0) Gecko/20100101 Firefox/12.0'
+	HTTP.Headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:16.0) Gecko/20100101 Firefox/16.0'
 
 ###################################################################################################
+@handler('/video/devour', 'Devour', thumb=ICON, art=ART)
 def MainMenu():
 
 	oc = ObjectContainer()
 
-	oc.add(DirectoryObject(key=Callback(LatestList), title="Latest Videos"))
+	oc.add(DirectoryObject(key=Callback(LatestList, page=1), title="Latest Videos"))
 	oc.add(SearchDirectoryObject(identifier="com.plexapp.plugins.devour", title="Search for Videos", prompt="Search Devour for...", thumb=R(SEARCH), art=R(ART)))
 
 	return oc
 
 ###################################################################################################
-def LatestList(page=1):
+@route('/video/devour/latest/{page}', page=int)
+def LatestList(page):
 
 	oc = ObjectContainer(title2="Latest Videos")
-
 	result = {}
 
 	@parallelize
@@ -53,7 +51,7 @@ def LatestList(page=1):
 			video = videos[num]
 
 			@task
-			def GetVideo(num = num, result = result, video = video):
+			def GetVideo(num=num, result=result, video=video):
 				try:
 					devour_url = video.xpath('./a')[0].get('href')
 					result[num] = DevourScrape(devour_url)
@@ -67,13 +65,12 @@ def LatestList(page=1):
 	for key in keys:
 		oc.add(result[key])
 
-	oc.add(DirectoryObject(key=Callback(LatestList, page=page+1), title="More Videos..."))
+	oc.add(NextPageObject(key=Callback(LatestList, page=page+1), title="More Videos..."))
 
 	return oc
 
 ####################################################################################################
 # DevourScrape takes a Devour video page URL and returns a well-formed VideoClipObject
-
 def DevourScrape(devour_url):
 
 	devour_html = HTML.ElementFromURL(devour_url, cacheTime=CACHE_1WEEK)
