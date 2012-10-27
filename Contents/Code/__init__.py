@@ -31,7 +31,7 @@ def MainMenu():
 	return oc
 
 ###################################################################################################
-@route('/video/devour/latest/{page}', page=int)
+@route('/video/devour/latest/{page}', page=int, allow_sync=True)
 def LatestList(page):
 
 	oc = ObjectContainer(title2="Latest Videos")
