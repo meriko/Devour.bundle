@@ -3,7 +3,7 @@ SEARCH_URL = 'http://devour.com/search/%s/'
 ####################################################################################################
 def Search(query):
 
-	oc = ObjectContainer(title2='Search Results', art=R('art-default.jpg'))
+	oc = ObjectContainer(title1='Devour', title2='Search Results', art=R('art-default.jpg'))
 	html = HTML.ElementFromURL(SEARCH_URL % (String.Quote(query, usePlus=True)))
 
 	for video in html.xpath('//div[starts-with(@class, "orko")]'):
