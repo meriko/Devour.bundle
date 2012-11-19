@@ -80,7 +80,7 @@ def DevourScrape(devour_url):
 	# Use the Devour-provided title, description vs. the ones assocaited with the underlying clips.
 	video.title = devour_html.xpath('//div[@id="left"]/h1//text()')[0]
 	try:
-		description = devour_html.xpath('//div[@id="left"]/p//text()')
+		description = devour_html.xpath('//div[@id="left"]/p//text()').strip()
 		video.summary = ''.join(description)
 	except:
 		pass
