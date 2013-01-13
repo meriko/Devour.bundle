@@ -2,22 +2,18 @@ TITLE = 'Devour'
 DEVOUR_URL = 'http://devour.com/'
 ART = 'art-default.jpg'
 ICON = 'icon-default.png'
-SEARCH = 'icon-search.png'
 
 ###################################################################################################
 def Start():
 
-	Plugin.AddViewGroup('InfoList', viewMode='InfoList', mediaType='items')
-
 	ObjectContainer.title1 = TITLE
-	ObjectContainer.view_group = 'InfoList'
 	ObjectContainer.art = R(ART)
 
 	DirectoryObject.thumb = R(ICON)
 	NextPageObject.thumb = R(ICON)
 
 	HTTP.CacheTime = 300
-	HTTP.Headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:16.0) Gecko/20100101 Firefox/16.0'
+	HTTP.Headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:18.0) Gecko/20100101 Firefox/18.0'
 
 ###################################################################################################
 @handler('/video/devour', 'Devour', thumb=ICON, art=ART)
@@ -26,7 +22,7 @@ def MainMenu():
 	oc = ObjectContainer()
 
 	oc.add(DirectoryObject(key=Callback(LatestList, page=1), title="Latest Videos"))
-	oc.add(SearchDirectoryObject(identifier="com.plexapp.plugins.devour", title="Search for Videos", prompt="Search Devour for...", thumb=R(SEARCH), art=R(ART)))
+	oc.add(SearchDirectoryObject(identifier="com.plexapp.plugins.devour", title="Search for Videos", prompt="Search Devour for...", thumb=R('search.png')))
 
 	return oc
 
