@@ -50,9 +50,20 @@ def LatestList(page):
 			def GetVideo(num=num, result=result, video=video):
 				try:
 					devour_url = video.xpath('./a')[0].get('href')
-					result[num] = DevourScrape(devour_url)
+					devour_html = HTML.ElementFromURL(devour_url, cacheTime=CACHE_1WEEK)
+					url = devour_html.xpath('//iframe[not(contains(@src, "facebook.com"))]')[0].get('src')
+					video = URLService.MetadataObjectForURL(url)
+
+					# Use the Devour-provided title, description vs. the ones assocaited with the underlying clips.
+					try:
+						video.title = devour_html.xpath('//div[@id="left"]/h1//text()')[0]
+						description = devour_html.xpath('//div[@id="left"]/p//text()')
+						video.summary = ''.join(description).strip()
+					except:
+						pass
+
+					result[num] = video
 				except:
-					Log("Couldn't add video from %s" % devour_url)
 					pass
 
 	keys = result.keys()
@@ -64,21 +75,3 @@ def LatestList(page):
 	oc.add(NextPageObject(key=Callback(LatestList, page=page+1), title="More Videos..."))
 
 	return oc
-
-####################################################################################################
-# DevourScrape takes a Devour video page URL and returns a well-formed VideoClipObject
-def DevourScrape(devour_url):
-
-	devour_html = HTML.ElementFromURL(devour_url, cacheTime=CACHE_1WEEK)
-	url = devour_html.xpath('//iframe[not(contains(@src, "facebook.com"))]')[0].get('src')
-	video = URLService.MetadataObjectForURL(url)
-
-	# Use the Devour-provided title, description vs. the ones assocaited with the underlying clips.
-	video.title = devour_html.xpath('//div[@id="left"]/h1//text()')[0]
-	try:
-		description = devour_html.xpath('//div[@id="left"]/p//text()').strip()
-		video.summary = ''.join(description)
-	except:
-		pass
-
-	return video
