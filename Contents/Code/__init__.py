@@ -1,28 +1,21 @@
 TITLE = 'Devour'
 DEVOUR_URL = 'http://devour.com/'
-ART = 'art-default.jpg'
-ICON = 'icon-default.png'
 
 ###################################################################################################
 def Start():
 
 	ObjectContainer.title1 = TITLE
-	ObjectContainer.art = R(ART)
-
-	DirectoryObject.thumb = R(ICON)
-	NextPageObject.thumb = R(ICON)
-
 	HTTP.CacheTime = 300
 	HTTP.Headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:18.0) Gecko/20100101 Firefox/18.0'
 
 ###################################################################################################
-@handler('/video/devour', 'Devour', thumb=ICON, art=ART)
+@handler('/video/devour', TITLE)
 def MainMenu():
 
 	oc = ObjectContainer()
 
 	oc.add(DirectoryObject(key=Callback(LatestList, page=1), title="Latest Videos"))
-	oc.add(SearchDirectoryObject(identifier="com.plexapp.plugins.devour", title="Search for Videos", prompt="Search Devour for...", thumb=R('search.png')))
+	oc.add(SearchDirectoryObject(identifier="com.plexapp.plugins.devour", title="Search for Videos", prompt="Search Devour for..."))
 
 	return oc
 
