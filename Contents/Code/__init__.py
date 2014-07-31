@@ -34,7 +34,7 @@ def LatestList(page):
 			url = '%s%d/' % (url, page)
 
 		html = HTML.ElementFromURL(url)
-		videos = html.xpath('//div[starts-with(@class, "orko")]')
+		videos = html.xpath("//*[contains(@class, 'article-list')]//*[contains(@class, 'article')]")
 
 		for num in range(len(videos)):
 			video = videos[num]
@@ -44,7 +44,7 @@ def LatestList(page):
 				try:
 					devour_url = video.xpath('./a')[0].get('href')
 					devour_html = HTML.ElementFromURL(devour_url, cacheTime=CACHE_1WEEK)
-					url = devour_html.xpath('//iframe[not(contains(@src, "facebook.com"))]')[0].get('src')
+					url = devour_html.xpath("//*[contains(@class, 'video-wrapper')]//iframe/@src")[0]
 					video = URLService.MetadataObjectForURL(url)
 
 					if video is not None:
